@@ -130,6 +130,8 @@ OBS::OBS()
 {
     App = this;
 
+    performTransition = true;        //Default to true and don't set the conf. 
+                                     //We don't want to let plugins disable standard behavior permanently.
     hSceneMutex = OSCreateMutex();
     hAuxAudioMutex = OSCreateMutex();
     hVideoEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -1390,7 +1392,7 @@ void OBS::ConfigureStreamButtons()
         return PostConfigureStreamButtons();
 
     RefreshStreamButtons();
-    SetWindowText(GetDlgItem(hwndMain, ID_STARTSTOP), bStreaming ? Str("MainWindow.StopStream") : Str("MainWindow.StartStream"));
+    SetWindowText(GetDlgItem(hwndMain, ID_STARTSTOP), (bStreaming && !bTestStream) ? Str("MainWindow.StopStream") : Str("MainWindow.StartStream"));
     SetWindowText(GetDlgItem(hwndMain, ID_TOGGLERECORDING), bRecording ? Str("MainWindow.StopRecording") : Str("MainWindow.StartRecording"));
     SetWindowText(GetDlgItem(hwndMain, ID_TESTSTREAM), bTestStream ? Str("MainWindow.StopTest") : Str("MainWindow.TestStream"));
 }
