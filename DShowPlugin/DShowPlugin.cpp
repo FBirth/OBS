@@ -1331,20 +1331,20 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 
                 //------------------------------------------
 
-                int soundOutputType = configData->data->GetInt(TEXT("soundOutputType"), 1);
+                int soundOutputType = configData->data->GetInt(TEXT("soundOutputType"), SOT_SOUND_TO_STREAM_ONLY);
                 switch(soundOutputType) {
-                    case 0:
-                    case 1: hwndTemp = GetDlgItem(hwnd, IDC_OUTPUTSOUND); break;
-                    case 2: hwndTemp = GetDlgItem(hwnd, IDC_PLAYDESKTOPSOUND); break;
+                    case SOT_NONE:
+                    case SOT_SOUND_TO_STREAM_ONLY: hwndTemp = GetDlgItem(hwnd, IDC_OUTPUTSOUND); break;
+                    case SOT_SOUND_TO_DESKTOP: hwndTemp = GetDlgItem(hwnd, IDC_PLAYDESKTOPSOUND); break;
                 }
 
                 SendMessage(hwndTemp, BM_SETCHECK, BST_CHECKED, 0);
 
-                EnableWindow(GetDlgItem(hwnd, IDC_TIMEOFFSET), soundOutputType == 1);
-                EnableWindow(GetDlgItem(hwnd, IDC_TIMEOFFSET_EDIT), soundOutputType == 1);
-                EnableWindow(GetDlgItem(hwnd, IDC_VOLUME), soundOutputType != 0);
+                EnableWindow(GetDlgItem(hwnd, IDC_TIMEOFFSET), soundOutputType == SOT_SOUND_TO_STREAM_ONLY);
+                EnableWindow(GetDlgItem(hwnd, IDC_TIMEOFFSET_EDIT), soundOutputType == SOT_SOUND_TO_STREAM_ONLY);
+                EnableWindow(GetDlgItem(hwnd, IDC_VOLUME), soundOutputType != SOT_NONE);
 
-                if (soundOutputType == 0)
+                if (soundOutputType == SOT_NONE)
                     SendMessage(hwndAudioList, CB_SETCURSEL, 0, 0);
 
                 ConfigureDialogProc(hwnd, WM_COMMAND, MAKEWPARAM(IDC_AUDIOLIST, CBN_SELCHANGE), (LPARAM)hwndAudioList);
@@ -2205,7 +2205,7 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 
                         //------------------------------------------
 
-                        int soundOutputType = 0;
+                        int soundOutputType = SOT_NONE;
                         UINT audioDeviceID = (UINT)SendMessage(GetDlgItem(hwnd, IDC_AUDIOLIST), CB_GETCURSEL, 0, 0);
 
                         if (audioDeviceID != CB_ERR) {
@@ -2219,9 +2219,9 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
                             configData->data->SetInt(TEXT("forceCustomAudioDevice"), (!configData->bDeviceHasAudio || audioDeviceID > 1));
 
                             if(SendMessage(GetDlgItem(hwnd, IDC_OUTPUTSOUND), BM_GETCHECK, 0, 0) == BST_CHECKED)
-                                soundOutputType = 1;
+                                soundOutputType = SOT_SOUND_TO_STREAM_ONLY;
                             else if(SendMessage(GetDlgItem(hwnd, IDC_PLAYDESKTOPSOUND), BM_GETCHECK, 0, 0) == BST_CHECKED)
-                                soundOutputType = 2;
+                                soundOutputType = SOT_SOUND_TO_DESKTOP;
                         }
 
                         configData->data->SetInt(TEXT("soundOutputType"), soundOutputType);

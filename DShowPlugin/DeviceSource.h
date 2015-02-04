@@ -72,6 +72,11 @@ struct ConvertData
     UINT   linePitch, lineShift;
 };
 
+#define SOT_NONE					0 // for backwards compatibility only
+#define SOT_SOUND_TO_STREAM_ONLY	1 // option "Output audio to stream only"
+#define SOT_SOUND_TO_DESKTOP		2 // option "Output audio to desktop"
+
+
 class DeviceSource;
 
 class DeviceAudioSource : public AudioSource
@@ -115,7 +120,7 @@ class DeviceSource : public ImageSource
     IBaseFilter             *deviceFilter;
     IBaseFilter             *audioDeviceFilter;
     CaptureFilter           *captureFilter;
-    IBaseFilter             *audioFilter; // Audio renderer filter
+    IBaseFilter             *audioFilter; // OBS audio capture or Microsoft audio renderer filter depending on soundOutputType
 
     //---------------------------------
 

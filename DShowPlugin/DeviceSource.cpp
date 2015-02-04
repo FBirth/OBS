@@ -279,7 +279,7 @@ void DeviceSource::SetAudioInfo(AM_MEDIA_TYPE *audioMediaType, GUID &expectedAud
     else
     {
         AppWarning(TEXT("DShowPlugin: Audio format was not a normal wave format"));
-        soundOutputType = 0;
+        soundOutputType = SOT_NONE;
     }
 
     DeleteMediaType(audioMediaType);
@@ -405,9 +405,9 @@ bool DeviceSource::LoadFilters()
 
     soundOutputType = data->GetInt(TEXT("soundOutputType")); //0 is for backward-compatibility
     if (strAudioID.CompareI(TEXT("Disabled")))
-        soundOutputType = 0;
+        soundOutputType = SOT_NONE;
 
-    if(soundOutputType != 0)
+    if(soundOutputType != SOT_NONE)
     {
         if(!bForceCustomAudio)
         {
@@ -441,7 +441,7 @@ bool DeviceSource::LoadFilters()
         if(FAILED(err) || !audioPin)
         {
             Log(TEXT("DShowPlugin: No audio pin, result = %lX"), err);
-            soundOutputType = 0;
+            soundOutputType = SOT_NONE;
         }
     }
     else
@@ -646,7 +646,7 @@ bool DeviceSource::LoadFilters()
 
     GUID expectedAudioType;
 
-    if(soundOutputType == 1)
+    if(soundOutputType == SOT_SOUND_TO_STREAM_ONLY)
     {
         IAMStreamConfig *audioConfig;
         if(SUCCEEDED(audioPin->QueryInterface(IID_IAMStreamConfig, (void**)&audioConfig)))
@@ -667,7 +667,7 @@ bool DeviceSource::LoadFilters()
                     else
                     {
                         AppWarning(TEXT("DShowPlugin: audioMediaTypes->Next failed, result = %08lX"), err);
-                        soundOutputType = 0;
+                        soundOutputType = SOT_NONE;
                     }
 
                     audioMediaTypes->Release();
@@ -675,19 +675,19 @@ bool DeviceSource::LoadFilters()
                 else
                 {
                     AppWarning(TEXT("DShowPlugin: audioMediaTypes->Next failed, result = %08lX"), err);
-                    soundOutputType = 0;
+                    soundOutputType = SOT_NONE;
                 }
             }
             else
             {
                 AppWarning(TEXT("DShowPlugin: Could not get audio format, result = %08lX"), err);
-                soundOutputType = 0;
+                soundOutputType = SOT_NONE;
             }
 
             audioConfig->Release();
         }
         else {
-            soundOutputType = 0;
+            soundOutputType = SOT_NONE;
         }
     }
 
@@ -707,29 +707,29 @@ bool DeviceSource::LoadFilters()
     //------------------------------------------------
     // add audio capture filter if any
 
-    if(soundOutputType == 1)
+    if(soundOutputType == SOT_SOUND_TO_STREAM_ONLY)
     {
         audioFilter = new CaptureFilter(this, MEDIATYPE_Audio, expectedAudioType);
         if(!audioFilter)
         {
             AppWarning(TEXT("Failed to create audio capture filter"));
-            soundOutputType = 0;
+            soundOutputType = SOT_NONE;
         }
     }
-    else if(soundOutputType == 2)
+    else if(soundOutputType == SOT_SOUND_TO_DESKTOP)
     {
         if(bUseAudioRender) {
             if(FAILED(err = CoCreateInstance(CLSID_AudioRender, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)&audioFilter)))
             {
                 AppWarning(TEXT("DShowPlugin: failed to create WaveOut Audio renderer, result = %08lX"), err);
-                soundOutputType = 0;
+                soundOutputType = SOT_NONE;
             }
         }
         else {
             if(FAILED(err = CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)&audioFilter)))
             {
                 AppWarning(TEXT("DShowPlugin: failed to create DirectSound renderer, result = %08lX"), err);
-                soundOutputType = 0;
+                soundOutputType = SOT_NONE;
             }
         }
 
@@ -744,7 +744,7 @@ bool DeviceSource::LoadFilters()
         }
     }
 
-    if(soundOutputType != 0)
+    if(soundOutputType != SOT_NONE)
     {
         if(FAILED(err = graph->AddFilter(audioFilter, NULL)))
             AppWarning(TEXT("DShowPlugin: Failed to add audio capture filter to graph, result = %08lX"), err);
@@ -761,7 +761,7 @@ bool DeviceSource::LoadFilters()
         goto cleanFinish;
     }
 
-    if(soundOutputType != 0 && !bDeviceHasAudio)
+    if(soundOutputType != SOT_NONE && !bDeviceHasAudio)
     {
         if(FAILED(err = graph->AddFilter(audioDeviceFilter, NULL)))
             AppWarning(TEXT("DShowPlugin: Failed to add audio device filter to graph, result = %08lX"), err);
@@ -844,7 +844,7 @@ bool DeviceSource::LoadFilters()
         }
     }
 
-    if(soundOutputType != 0)
+    if(soundOutputType != SOT_NONE)
     {
         if (elgato && bDeviceHasAudio)
         {
@@ -885,7 +885,7 @@ bool DeviceSource::LoadFilters()
         if(!bConnected)
         {
             AppWarning(TEXT("DShowPlugin: Failed to connect the audio device pin to the audio capture pin, result = %08lX"), err);
-            soundOutputType = 0;
+            soundOutputType = SOT_NONE;
         }
     }
 
@@ -907,7 +907,7 @@ bool DeviceSource::LoadFilters()
         }
     }
 
-    if(soundOutputType == 1)
+    if(soundOutputType == SOT_SOUND_TO_STREAM_ONLY)
     {
         audioOut = new DeviceAudioSource;
         audioOut->Initialize(this);
@@ -973,7 +973,7 @@ cleanFinish:
             audioOut = NULL;
         }
 
-        soundOutputType = 0;
+        soundOutputType = SOT_NONE;
 
         if(lpImageBuffer)
         {
@@ -1113,10 +1113,10 @@ void DeviceSource::GlobalSourceLeaveScene()
     if (--enteredSceneCount)
         return;
 
-    if(soundOutputType == 1) {
+    if(soundOutputType == SOT_SOUND_TO_STREAM_ONLY) {
         audioOut->SetVolume(0.0f);
     }
-    if(soundOutputType == 2) {
+    if(soundOutputType == SOT_SOUND_TO_DESKTOP) {
         IBasicAudio *basicAudio;
         if(SUCCEEDED(audioFilter->QueryInterface(IID_IBasicAudio, (void**)&basicAudio)))
         {
@@ -1136,10 +1136,10 @@ void DeviceSource::GlobalSourceEnterScene()
 
     float sourceVolume = data->GetFloat(TEXT("volume"), 1.0f);
 
-    if(soundOutputType == 1) {
+    if(soundOutputType == SOT_SOUND_TO_STREAM_ONLY) {
         audioOut->SetVolume(sourceVolume);
     }
-    if(soundOutputType == 2) {
+    if(soundOutputType == SOT_SOUND_TO_DESKTOP) {
         IBasicAudio *basicAudio;
         if(SUCCEEDED(audioFilter->QueryInterface(IID_IBasicAudio, (void**)&basicAudio)))
         {
