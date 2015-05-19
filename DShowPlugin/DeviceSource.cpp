@@ -1467,6 +1467,7 @@ void DeviceSource::ReceiveMediaSample(IMediaSample *sample, bool bAudio)
                 BITMAPINFOHEADER *bih = GetVideoBMIHeader(mt);
                 newCX = bih->biWidth;
                 newCY = bih->biHeight;
+                OSDebugOut(TEXT("ReceiveMediaSample: New video size %dx%d\r\n"), newCX, newCY);
                 DeleteMediaType(mt);
             }
 
@@ -1640,7 +1641,8 @@ void DeviceSource::Preprocess()
                 bReadyToDraw = true;
             }
         }
-        else if(colorType == DeviceOutputType_YVYU || colorType == DeviceOutputType_YUY2)
+        else if(colorType == DeviceOutputType_YVYU || colorType == DeviceOutputType_YUY2
+             || colorType == DeviceOutputType_UYVY || colorType == DeviceOutputType_HDYC)
         {
             LPBYTE lpData;
             UINT pitch;
@@ -1649,22 +1651,18 @@ void DeviceSource::Preprocess()
 
             if(texture->Map(lpData, pitch))
             {
-                Convert422To444(lpData, lastSample->lpData, pitch, true);
-                texture->Unmap();
-            }
-
-            bReadyToDraw = true;
-        }
-        else if(colorType == DeviceOutputType_UYVY || colorType == DeviceOutputType_HDYC)
-        {
-            LPBYTE lpData;
-            UINT pitch;
-
-            ChangeSize();
-
-            if(texture->Map(lpData, pitch))
-            {
-                Convert422To444(lpData, lastSample->lpData, pitch, false);
+                
+                // FMB BUGFIX 18-May-2015: Fix crash with GCHD software v.2.10.67 when a smaller resolution than current 
+                // was selected in Elgato Property Page (v. 2.10.67) because the dynamic media format change was not correctly propagated.
+                // This fix only fixes the crash but doesn't show the video in this case. Will be fixed in newer Elgato software.
+                //_ASSERTE(requiredSize <= lastSample->dataLength);
+                int requiredSize = lastSample->cx * lastSample->cy * 2; // 2 bytes per pixel
+                if (requiredSize <= lastSample->dataLength)
+                {
+                    bool leadingY = (colorType == DeviceOutputType_YVYU || colorType == DeviceOutputType_YUY2);
+                    Convert422To444(lpData, lastSample->lpData, pitch, leadingY);
+                }
+                else OSDebugOut(TEXT("Preprocess(): BUFFER TOO SMALL! Ignore lastSample %dx%d, size %d.\r\n"), lastSample->cx, lastSample->cy, lastSample->dataLength);
                 texture->Unmap();
             }
 
