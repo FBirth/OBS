@@ -103,12 +103,6 @@ DEFINE_GUID(IID_IElgatoVideoCaptureFilter6,
 0x39f50f4c, 0x99e1, 0x464a, 0xb6, 0xf9, 0xd6, 0x05, 0xb4, 0xfb, 0x59, 0x25);
 
 
-
-// {39F50F4C-99E1-464a-B6F9-D605B4FB5925}
-DEFINE_GUID(IID_IElgatoVideoCaptureFilter6,
-0x39f50f4c, 0x99e1, 0x464a, 0xb6, 0xf9, 0xd6, 0x05, 0xb4, 0xfb, 0x59, 0x25);
-
-
 /*=============================================================================
 // IElgatoVideoCaptureFilter
 =============================================================================*/
