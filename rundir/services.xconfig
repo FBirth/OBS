@@ -5,7 +5,7 @@ services : {
       "US West: San Francisco, CA"           : rtmp://live.twitch.tv/app
       "Asia: Hong Kong"                      : rtmp://live-hkg.twitch.tv/app
       "Asia: Seoul, South Korea"             : rtmp://live-sel.twitch.tv/app
-      "Asia: Singapore"                      : rtmp://live-sin-backup.twitch.tv/app
+      "Asia: Singapore"                      : rtmp://live-sin.twitch.tv/app
       "Asia: Taipei, Taiwan"                 : rtmp://live-tpe.twitch.tv/app
       "Asia: Tokyo, Japan"                   : rtmp://live-tyo.twitch.tv/app
       "Australia: Sydney"                    : rtmp://live-syd.twitch.tv/app
@@ -35,21 +35,16 @@ services : {
     id : 3
     servers : {
       "US: Primary"           : rtmp://live.vaughnsoft.net:443/live
-      "US: Chicago, IL"       : rtmp://live-ord.vaughnsoft.net:443/live
+      "US: San Jose, CA"      : rtmp://live-sjc.vaughnsoft.net:443/live
       "US: New York, NY"      : rtmp://live-nyc.vaughnsoft.net:443/live
       "US: New York 2, NY"    : rtmp://live-nyc2.vaughnsoft.net:443/live
-      "US: Ashburn, VA"       : rtmp://live-iad.vaughnsoft.net:443/live
       "EU: Amsterdam, NL"     : rtmp://live-nl.vaughnsoft.net:443/live
-      "EU: Frankfurt, DE"     : rtmp://live-de.vaughnsoft.net:443/live
     }
   }
   GoodGame.ru : {
     id : 5
     servers : {
-      "Моscow М9"    : rtmp://bal.goodgame.ru:1940/live
-      "Moscow М10-1" : rtmp://stream.goodgame.ru:1940/live
-      "Моscow М10-2" : rtmp://stream3.goodgame.ru:1940/live
-      "Моscow М10-3" : rtmp://stream4.goodgame.ru:1940/live
+      "Моscow"                : rtmp://msk.goodgame.ru:1940/live
     }
   }
   Dailymotion / Dailymotion Games : {
@@ -87,16 +82,19 @@ services : {
       "Asia: Singapore"                   : rtmp://live.lax.hitbox.tv/push
       "China: Hong Kong"                  : rtmp://live.hkg.hitbox.tv/push
       "EU-Central: Nurnberg, Germany"     : rtmp://live.nbg.hitbox.tv/push
-      "EU-East: Vienna, Austria"          : rtmp://live.vie.hitbox.tv/push
       "EU-North: London, United Kingdom"  : rtmp://live.lhr.hitbox.tv/push
+      "EU-South: Milan, Italia"           : rtmp://live.mxp.hitbox.tv/push
       "EU-West: Frankfurt, Germany"       : rtmp://live.fra.hitbox.tv/push
+      "EU-West: Paris, France"            : rtmp://live.cdg.hitbox.tv/push
       "Oceania: Sydney, Australia"        : rtmp://live.syd.hitbox.tv/push
       "Russia: Moscow"                    : rtmp://live.dme.hitbox.tv/push
       "South America: Sao Paulo, Brazil"  : rtmp://live.gru.hitbox.tv/push
       "South Korea: Seoul"                : rtmp://live.icn.hitbox.tv/push
       "US-Central: Denver"                : rtmp://live.den.hitbox.tv/push
+      "US-East: New York"                 : rtmp://live.jfk.hitbox.tv/push
       "US-East: Washington"               : rtmp://live.vgn.hitbox.tv/push
       "US-West: Los Angeles"              : rtmp://live.lax.hitbox.tv/push
+      "US-West: San Francisco"            : rtmp://live.sfo.hitbox.tv/push
     }
     recommended : {
       "keyint" : 2000

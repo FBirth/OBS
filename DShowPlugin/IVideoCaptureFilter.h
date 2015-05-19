@@ -12,7 +12,7 @@
 //! @date        29-Jan-15 FMB - Added MPEG-TS Pin to filter, added interface IElgatoVideoCaptureFilter6
 //!
 //! @note        The DirectShow filter works with
-//!              - Elgato Game Capture HD 
+//!              - Elgato Game Capture HD
 //!              - Elgato Game Capture HD60
 //! @bc -----------------------------------------------------------------------
 //! @ec @par     Copyright
@@ -62,6 +62,14 @@
 #define VIDEO_CAPTURE_FILTER_INTERFACE_VERSION	60
 
 
+#define ELGATO_VCF_VIDEO_PID	100	//!< video PID in MPEG-TS stream
+#define ELGATO_VCF_AUDIO_PID	101	//!< audio PID in MPEG-TS stream
+
+//! Interface version:
+//! - 1st digit: interface version (e.g. 5 for IElgatoVideoCaptureFilter5)
+//! - 2nd digit: revision (changed e.g. when reserved fields in structures changed their meaning)
+#define VIDEO_CAPTURE_FILTER_INTERFACE_VERSION	60
+
 // {39F50F4C-99E1-464a-B6F9-D605B4FB5918}
 DEFINE_GUID(CLSID_ElgatoVideoCaptureFilter,
 0x39f50f4c, 0x99e1, 0x464a, 0xb6, 0xf9, 0xd6, 0x05, 0xb4, 0xfb, 0x59, 0x18);
@@ -94,6 +102,11 @@ DEFINE_GUID(IID_IElgatoVideoCaptureFilter5,
 DEFINE_GUID(IID_IElgatoVideoCaptureFilter6,
 0x39f50f4c, 0x99e1, 0x464a, 0xb6, 0xf9, 0xd6, 0x05, 0xb4, 0xfb, 0x59, 0x25);
 
+
+
+// {39F50F4C-99E1-464a-B6F9-D605B4FB5925}
+DEFINE_GUID(IID_IElgatoVideoCaptureFilter6,
+0x39f50f4c, 0x99e1, 0x464a, 0xb6, 0xf9, 0xd6, 0x05, 0xb4, 0xfb, 0x59, 0x25);
 
 
 /*=============================================================================
@@ -285,7 +298,6 @@ DECLARE_INTERFACE_(IElgatoVideoCaptureFilter5, IElgatoVideoCaptureFilter4)
 	//! Set settings
 	STDMETHOD(SetSettingsEx)(THIS_ PCVIDEO_CAPTURE_FILTER_SETTINGS_EX pcSettings) PURE;
 };
-
 
 //! Interface IElgatoVideoCaptureFilter6
 DECLARE_INTERFACE_(IElgatoVideoCaptureFilter6, IElgatoVideoCaptureFilter5)

@@ -481,7 +481,7 @@ void AddOutput(AM_MEDIA_TYPE *pMT, BYTE *capsData, bool bAllowV2, List<MediaOutp
         if(type != VideoOutputType_None)
         {
 #if ELGATO_WORKAROUND // FMB NOTE 18-Feb-14: Not necessary anymore since Elgato Game Capture v.2.20 which implements IAMStreamConfig
-            if (!pVSCC && bAllowV2)	 
+            if (!pVSCC && bAllowV2)
             {
                 AddElgatoRes(pMT, 480,  360,  type, outputInfoList);
                 AddElgatoRes(pMT, 640,  480,  type, outputInfoList);
@@ -1310,7 +1310,8 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
                 EnableWindow(GetDlgItem(hwnd, IDC_DELAY_EDIT), bUseBuffering);
                 EnableWindow(GetDlgItem(hwnd, IDC_DELAY),      bUseBuffering);
 
-                SendMessage(GetDlgItem(hwnd, IDC_USEBUFFERING), BM_SETCHECK, bUseBuffering ? BST_CHECKED : BST_UNCHECKED, 0);
+                if (strDevice.IsValid())
+                    SendMessage(GetDlgItem(hwnd, IDC_USEBUFFERING), BM_SETCHECK, bUseBuffering ? BST_CHECKED : BST_UNCHECKED, 0);
 
                 DWORD bufferTime = configData->data->GetInt(TEXT("bufferTime"));
                 SendMessage(GetDlgItem(hwnd, IDC_DELAY), UDM_SETRANGE32, 0, 8000);
@@ -1925,7 +1926,7 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
                             double minFPS = 10000000.0/double(fpsInfo.supportedIntervals[i].maxFrameInterval);
                             double maxFPS = 10000000.0/double(fpsInfo.supportedIntervals[i].minFrameInterval);
 
-#if 1 // FMB NOTE 05-Feb-15: Override some common fps values to avoid rounding errors (60.002 was displayed instead of 60 fps for the Elgato GCHD60)
+                            // FMB NOTE 05-Feb-15: Override some common fps values to avoid rounding errors (60.002 was displayed instead of 60 fps for the Elgato GCHD60)
                             if (fpsInfo.supportedIntervals[i].maxFrameInterval == 400000) minFPS = 25.0;
                             if (fpsInfo.supportedIntervals[i].minFrameInterval == 400000) maxFPS = 25.0;
                             if (fpsInfo.supportedIntervals[i].maxFrameInterval == 200000) minFPS = 50.0;
@@ -1934,7 +1935,6 @@ INT_PTR CALLBACK ConfigureDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
                             if (fpsInfo.supportedIntervals[i].minFrameInterval == 333333) maxFPS = 30.0;
                             if (fpsInfo.supportedIntervals[i].maxFrameInterval == 166666) minFPS = 60.0;
                             if (fpsInfo.supportedIntervals[i].minFrameInterval == 166666) maxFPS = 60.0;
-#endif
 
                             String strFPS;
                             if(CloseDouble(minFPS, maxFPS))
